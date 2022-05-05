@@ -1,64 +1,71 @@
-
 //import * as App from "./components/App.js";
 //import App from "./components/App.js";
 //console.log(App);
 import pokemon from "./data/pokemon/pokemon.js";
 //import webdev from "./data/webdev/webdev.js";
-import {gameBoard, timerOff, match} from "./components/App.js";
+import {
+  gameBoard,
+  timerOff,
+  match,
+  drawScore,
+  noMatch,
+} from "./components/App.js";
 
 //Our global variables
 let selectedCards = [];
 let selectedCardsNames = [];
 
-let score = 0;
-let firstClicked = false; 
+let firstClicked = false;
 let time = "";
 let lockGameBoard = false;
 
-let data = pokemon.items
+let data = pokemon.items;
 
 //Calling gameBoard - Creating my gameBoard --Appending cards to HTML
 const cardsArray = gameBoard(data);
-for (let i = 0; i <cardsArray.length; i++) {
+for (let i = 0; i < cardsArray.length; i++) {
   document.getElementById("cards").appendChild(cardsArray[i]);
 }
 
-
 //FUNCIÓN HANDLING CLICK
 const playGame = () => {
-for (let i = 0; i < cardsArray.length; i++) {
-  let card = cardsArray[i];
-
-  card.addEventListener("click", () => {
-  if (lockGameBoard) return; 
-  if (card.classList) {
-    card.classList.toggle("is-flipped");
-  }
-
-  if (!firstClicked) {
-    timerOn();
-  }
-  firstClicked = true; 
-
-  if (selectedCardsNames.length < 2) {
-    selectedCards.push(card);
-    selectedCardsNames.push(card.dataset.name);
-    if (selectedCardsNames.length === 2) {
-      if (selectedCardsNames[0] === selectedCardsNames[1]) {
-        match(selectedCards, selectedCardsNames, score);
-      } else {
-        lockGameBoard = true; //se bloquea el gameboard para evitar que el usuario seleccione más de un par de tarjetas
-        noMatch();
+  for (let i = 0; i < cardsArray.length; i++) {
+    let card = cardsArray[i];
+    card.addEventListener("click", () => {
+      if (lockGameBoard) return;
+      if (card.classList) {
+        card.classList.toggle("is-flipped");
       }
-      drawScore();
-      if (score === 9) {
-        winGame();
+
+      if (!firstClicked) {
+        timerOn();
       }
-    }
+      firstClicked = true;
+      if (selectedCardsNames.length < 2) {
+        selectedCards.push(card);
+        selectedCardsNames.push(card.dataset.name);
+        console.log(selectedCardsNames.length, "length");
+        if (selectedCardsNames.length === 2) {
+          if (selectedCardsNames[0] === selectedCardsNames[1]) {
+            match();
+            const sum = drawScore();
+            if (sum === 9) {
+              winGame();
+            }
+          } else {
+            lockGameBoard = true;
+            noMatch(selectedCards[0], selectedCards[1]);
+          }
+          selectedCards = [];
+          selectedCardsNames = [];
+          setTimeout(() => {
+            lockGameBoard = false;
+          }, 1510);
+        }
+      }
+    });
   }
-  });
-}
-}
+};
 playGame(cardsArray);
 
 //FUNCIÓN MATCH
@@ -70,23 +77,6 @@ playGame(cardsArray);
   score++;
 }; */
 
-//FUNCIÓN NO MATCH
-const noMatch = () => {
-  setTimeout(() => {
-    selectedCards[0].classList.toggle("is-flipped");
-    selectedCards[1].classList.toggle("is-flipped");
-    selectedCards = [];
-    selectedCardsNames = [];
-    lockGameBoard = false; //se desbloquea el gameboard para seguir seleccionando parejas
-  }, 1500);
-}; 
-
-//FUNCIÓN SCORE
-const drawScore = () => {
-  let labelScore = document.getElementById("score");
-  labelScore.textContent = "Score: " + score * 10;
-}; 
-
 //FUNCIÓN WIN
 const winGame = () => {
   setTimeout(() => {
@@ -95,7 +85,7 @@ const winGame = () => {
     congratsPopup();
     timerOff(time);
   }, 1300);
-}; 
+};
 
 //FUNCIÓN OPEN MODAL
 const congratsPopup = () => {
@@ -109,7 +99,7 @@ const congratsPopup = () => {
   closeCongrats.addEventListener("click", () => {
     winAlert.classList.remove("show-modalDialog");
   });
-}; 
+};
 
 //FUNCIÓN START TIMER
 const timerOn = () => {
@@ -131,49 +121,13 @@ const timerOn = () => {
 
     timerEl.textContent = "Timer: " + `${MM}:${SS}`;
   }, 1000);
-}; 
+};
 
 //FUNCIÓN RESTART
 let restartGame = document.getElementById("restart");
 restartGame.addEventListener("click", () => {
   document.location.reload();
-}); 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+});
 
 /*---------------------------------------------------------------------------------------------------------------------*/
 
@@ -189,7 +143,6 @@ window.closePopup = function closePopup() {
   popUp.classList.remove("show-modalDialog");
 }; */
 
-
 //APPENDIG GAMEBOARD A HTML
 //const cardsArray = App.start();
 //console.log(cardsArray)
@@ -197,7 +150,3 @@ window.closePopup = function closePopup() {
 /*for (let index = 0; index < cardsArray.length; index++) {
   document.getElementById("cards").appendChild(cardsArray[index]);
 } */
-
-
-
-

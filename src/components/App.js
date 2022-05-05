@@ -30,15 +30,14 @@ const shuffle = (pokemon) => {
   //let originalCards = pokemon;
   let copyCards = pokemon.concat(pokemon);
   //console.log(copyCards);
-  let shuffledCards = copyCards.sort(() => Math.random() - 0.5); 
-  
+  let shuffledCards = copyCards.sort(() => Math.random() - 0.5);
+
   return shuffledCards; //retornará array de cartas aleatoriamente
 };
 
-
 //FUNCIÓN CREANDO ELEMENTOS DEL DOM
 const gameBoard = (pokemon) => {
-  let shuffledCards = shuffle(pokemon)
+  let shuffledCards = shuffle(pokemon);
   let cardsArray = [];
 
   for (let index = 0; index < shuffledCards.length; index++) {
@@ -67,28 +66,34 @@ const gameBoard = (pokemon) => {
     //playGame(card);
   }
   return cardsArray; //retornará el listado de cartas
-}; 
-
+};
 
 //FUNCIÓN MATCH
-const match = (selectedCards, selectedCardsNames, score) => {
+const match = () => {
   let matchSound = new Audio("sound/match.mp3");
-  matchSound.play();
-  selectedCards = [];
-  selectedCardsNames = [];
-  score++;
-}; 
+  return matchSound.play();
+};
 
+//FUNCIÓN NO MATCH
+const noMatch = (firstCard, secondCard) => {
+  setTimeout(() => {
+    firstCard.classList.toggle("is-flipped");
+    secondCard.classList.toggle("is-flipped");
+  }, 1500);
+};
+
+let score = 0;
+//FUNCIÓN SCORE
+const drawScore = () => {
+  score++;
+  let labelScore = document.getElementById("score");
+  labelScore.textContent = "Score: " + score * 10;
+  return score;
+};
 
 //FUNCIÓN STOP TIMER
 const timerOff = (time) => {
   clearInterval(time);
 };
 
-
-
-
-
-
-
-export {gameBoard, timerOff, match};
+export { gameBoard, timerOff, match, drawScore, noMatch };
